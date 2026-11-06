@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Read the README
+    url: https://github.com/devs-des1re/releaselog/blob/main/README.md
+    about: Inputs, outputs, AI setup, and troubleshooting are documented there.
+  - name: Open a discussion
+    url: https://github.com/devs-des1re/releaselog/discussions
+    about: Ask a question or discuss an idea before opening an issue.

@@ -1,0 +1,28 @@
+tag:
+  order: semver
+  base_version_granularity: patch
+sections:
+  breaking: { enabled: true, header: 'Breaking Changes' }
+  features: { header: 'New Features' }
+  fixes: { header: 'Bug Fixes' }
+  docs: { header: 'Docs Changes' }
+  other: { header: 'Other Changes' }
+commits:
+  exclude_bots: true
+  include_merge_commits: false
+  include_pr_numbers: true
+  allow_post_tag_commits: false
+contributors:
+  require_pings: false
+  fuzzy_name_search: false
+humanize:
+  enabled: true
+  mode: vercel
+  provider: openai
+  model: gpt-4o-mini
+  temperature: 0.3
+  on_error: fallback
+publish:
+  release: true
+  draft: false
+  prerelease: auto

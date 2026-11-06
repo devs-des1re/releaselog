@@ -1,0 +1,146 @@
+[
+  {
+    "sha": "a1b2c3d",
+    "shortSha": "a1b2c3d",
+    "parents": ["0000000"],
+    "title": "feat(api): add rate limiting (#12)",
+    "body": "",
+    "authorName": "Arjun",
+    "authorEmail": "arjun@example.com"
+  },
+  {
+    "sha": "b79fd70",
+    "shortSha": "b79fd70",
+    "parents": ["a1b2c3d"],
+    "title": "feat: show PR numbers in release changelog (#2)",
+    "body": "",
+    "authorName": "Arjun",
+    "authorEmail": "arjun@example.com"
+  },
+  {
+    "sha": "c1ab51f",
+    "shortSha": "c1ab51f",
+    "parents": ["b79fd70"],
+    "title": "fix: build pre releases from the dev branch (#3)",
+    "body": "",
+    "authorName": "Arjun",
+    "authorEmail": "arjun@example.com"
+  },
+  {
+    "sha": "e9f0a1b",
+    "shortSha": "e9f0a1b",
+    "parents": ["c1ab51f"],
+    "title": "fix: correct typo in error message",
+    "body": "",
+    "authorName": "Arjun",
+    "authorEmail": "arjun@example.com"
+  },
+  {
+    "sha": "d85cc0e",
+    "shortSha": "d85cc0e",
+    "parents": ["e9f0a1b"],
+    "title": "docs: add security policy (#2)",
+    "body": "",
+    "authorName": "Arjun",
+    "authorEmail": "arjun@example.com"
+  },
+  {
+    "sha": "464d4eb",
+    "shortSha": "464d4eb",
+    "parents": ["d85cc0e"],
+    "title": "chore: removed supported versions (#2)",
+    "body": "",
+    "authorName": "Arjun",
+    "authorEmail": "arjun@example.com"
+  },
+  {
+    "sha": "a1b2c3e",
+    "shortSha": "a1b2c3e",
+    "parents": ["464d4eb"],
+    "title": "feat!: drop Node 18 support",
+    "body": "",
+    "authorName": "Arjun",
+    "authorEmail": "arjun@example.com"
+  },
+  {
+    "sha": "a1b2c3f",
+    "shortSha": "a1b2c3f",
+    "parents": ["a1b2c3e"],
+    "title": "fix: rename config key",
+    "body": "The old key still works for now.\n\nBREAKING CHANGE: config files must use the new key.",
+    "authorName": "Arjun",
+    "authorEmail": "arjun@example.com"
+  },
+  {
+    "sha": "a1b2c40",
+    "shortSha": "a1b2c40",
+    "parents": ["a1b2c3f"],
+    "title": "feature: add preview mode",
+    "body": "",
+    "authorName": "Arjun",
+    "authorEmail": "arjun@example.com"
+  },
+  {
+    "sha": "a1b2c41",
+    "shortSha": "a1b2c41",
+    "parents": ["a1b2c40"],
+    "title": "bugfix: repair cache",
+    "body": "",
+    "authorName": "Arjun",
+    "authorEmail": "arjun@example.com"
+  },
+  {
+    "sha": "a1b2c42",
+    "shortSha": "a1b2c42",
+    "parents": ["a1b2c41"],
+    "title": "hotfix: escape markdown",
+    "body": "",
+    "authorName": "Arjun",
+    "authorEmail": "arjun@example.com"
+  },
+  {
+    "sha": "a1b2c43",
+    "shortSha": "a1b2c43",
+    "parents": ["a1b2c42"],
+    "title": "doc: fix typo",
+    "body": "",
+    "authorName": "Arjun",
+    "authorEmail": "arjun@example.com"
+  },
+  {
+    "sha": "a1b2c44",
+    "shortSha": "a1b2c44",
+    "parents": ["a1b2c43", "b79fd70"],
+    "title": "Merge pull request #21 from dev",
+    "body": "",
+    "authorName": "Arjun",
+    "authorEmail": "arjun@example.com"
+  },
+  {
+    "sha": "a1b2c45",
+    "shortSha": "a1b2c45",
+    "parents": ["a1b2c44", "c1ab51f"],
+    "title": "feat: merge release branch",
+    "body": "",
+    "authorName": "Arjun",
+    "authorEmail": "arjun@example.com"
+  },
+  {
+    "sha": "a1b2c46",
+    "shortSha": "a1b2c46",
+    "parents": ["a1b2c45"],
+    "title": "chore(deps): bump the ai package",
+    "body": "",
+    "authorName": "dependabot[bot]",
+    "authorEmail": "49699333+dependabot[bot]@users.noreply.github.com"
+  },
+  {
+    "sha": "a1b2c47",
+    "shortSha": "a1b2c47",
+    "parents": ["a1b2c46"],
+    "title": "Update README wording",
+    "body": "",
+    "authorName": "Arjun",
+    "authorEmail": "arjun@example.com"
+  }
+]

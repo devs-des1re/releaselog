@@ -1,0 +1,168 @@
+name: releaselog
+description: Generate structured release notes from Git history and publish them as GitHub Releases.
+author: devs-des1re
+
+branding:
+  icon: tag
+  color: blue
+
+inputs:
+  token:
+    description: GitHub token with contents write access. Use GITHUB_TOKEN or a PAT.
+    required: true
+  dev-branch:
+    description: Branch used for pre-release work.
+    required: true
+  main-branch:
+    description: Branch used for stable releases. Default main.
+    required: false
+  current-tag:
+    description: Tag being released. Defaults to the tag from the workflow trigger ref.
+    required: false
+  previous-tag:
+    description: Override previous tag detection. Used verbatim without validation.
+    required: false
+  dry-run:
+    description: Generate notes and write files without publishing. Default false.
+    required: false
+  publish:
+    description: Create or update the GitHub Release. Default true.
+    required: false
+  release-name:
+    description: Release name. Defaults to the current tag.
+    required: false
+  release-draft:
+    description: Create the release as a draft. Default false.
+    required: false
+  release-prerelease:
+    description: 'auto mirrors the tag, or set true or false to force it. Default auto.'
+    required: false
+  output-file:
+    description: Write the generated Markdown to this path.
+    required: false
+  changelog-file:
+    description: Append the generated Markdown to this file.
+    required: false
+  template-path:
+    description: Handlebars template that replaces the built-in renderer.
+    required: false
+  config-path:
+    description: YAML configuration file. Default .releaselog.yml.
+    required: false
+  tag-order:
+    description: 'Tag ordering: semver or date. Default semver.'
+    required: false
+  base-version-granularity:
+    description: 'Base version grouping for pre-releases: patch or minor. Default patch.'
+    required: false
+  exclude-bots:
+    description: Skip bot authors. Default false.
+    required: false
+  include-merge-commits:
+    description: Keep non-squash merge commits. Default true.
+    required: false
+  include-pr-numbers:
+    description: Extract trailing PR numbers and link them. Default true.
+    required: false
+  breaking-changes:
+    description: Emit a Breaking Changes section when breaking commits exist. Default false.
+    required: false
+  allow-post-tag-commits:
+    description: Use the branch head instead of the tag commit as the range end. Default false.
+    required: false
+  require-contributor-pings:
+    description: Fail when an author cannot be resolved to a GitHub login. Default false.
+    required: false
+  contributor-ping-fuzzy-name-search:
+    description: Also search users by full name when resolving authors. Default false.
+    required: false
+  humanize:
+    description: Rewrite the changelog with an AI provider. Default false.
+    required: false
+  ai-mode:
+    description: 'AI integration mode: vercel or raw. Default vercel.'
+    required: false
+  ai-provider:
+    description: 'AI provider: openai, anthropic, google, or openai-compatible. Default openai.'
+    required: false
+  ai-model:
+    description: AI model identifier. Default gpt-4o-mini.
+    required: false
+  ai-endpoint:
+    description: Base URL override. Required for openai-compatible.
+    required: false
+  ai-api-key:
+    description: Provider API key. Required when humanize is true.
+    required: false
+  ai-temperature:
+    description: Sampling temperature between 0 and 1. Default 0.3.
+    required: false
+  ai-system-prompt:
+    description: Override the default humanisation system prompt.
+    required: false
+  ai-on-error:
+    description: 'AI failure behaviour: fallback keeps the raw changelog, fail stops the action. Default fallback.'
+    required: false
+
+outputs:
+  changelog:
+    description: Full generated Markdown.
+    value: ${{ steps.releaselog.outputs.changelog }}
+  previous-tag:
+    description: Resolved previous tag, empty on the first release.
+    value: ${{ steps.releaselog.outputs.previous-tag }}
+  current-tag:
+    description: Resolved current tag.
+    value: ${{ steps.releaselog.outputs.current-tag }}
+  release-url:
+    description: Created or edited release URL, empty when not published.
+    value: ${{ steps.releaselog.outputs.release-url }}
+  humanized:
+    description: Whether the AI rewrite succeeded.
+    value: ${{ steps.releaselog.outputs.humanized }}
+
+runs:
+  using: composite
+  steps:
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '24'
+
+    - name: Generate release notes
+      id: releaselog
+      shell: bash
+      env:
+        INPUT_TOKEN: ${{ inputs.token }}
+        INPUT_DEV_BRANCH: ${{ inputs.dev-branch }}
+        INPUT_MAIN_BRANCH: ${{ inputs.main-branch }}
+        INPUT_CURRENT_TAG: ${{ inputs.current-tag }}
+        INPUT_PREVIOUS_TAG: ${{ inputs.previous-tag }}
+        INPUT_DRY_RUN: ${{ inputs.dry-run }}
+        INPUT_PUBLISH: ${{ inputs.publish }}
+        INPUT_RELEASE_NAME: ${{ inputs.release-name }}
+        INPUT_RELEASE_DRAFT: ${{ inputs.release-draft }}
+        INPUT_RELEASE_PRERELEASE: ${{ inputs.release-prerelease }}
+        INPUT_OUTPUT_FILE: ${{ inputs.output-file }}
+        INPUT_CHANGELOG_FILE: ${{ inputs.changelog-file }}
+        INPUT_TEMPLATE_PATH: ${{ inputs.template-path }}
+        INPUT_CONFIG_PATH: ${{ inputs.config-path }}
+        INPUT_TAG_ORDER: ${{ inputs.tag-order }}
+        INPUT_BASE_VERSION_GRANULARITY: ${{ inputs.base-version-granularity }}
+        INPUT_EXCLUDE_BOTS: ${{ inputs.exclude-bots }}
+        INPUT_INCLUDE_MERGE_COMMITS: ${{ inputs.include-merge-commits }}
+        INPUT_INCLUDE_PR_NUMBERS: ${{ inputs.include-pr-numbers }}
+        INPUT_BREAKING_CHANGES: ${{ inputs.breaking-changes }}
+        INPUT_ALLOW_POST_TAG_COMMITS: ${{ inputs.allow-post-tag-commits }}
+        INPUT_REQUIRE_CONTRIBUTOR_PINGS: ${{ inputs.require-contributor-pings }}
+        INPUT_CONTRIBUTOR_PING_FUZZY_NAME_SEARCH: ${{ inputs.contributor-ping-fuzzy-name-search }}
+        INPUT_HUMANIZE: ${{ inputs.humanize }}
+        INPUT_AI_MODE: ${{ inputs.ai-mode }}
+        INPUT_AI_PROVIDER: ${{ inputs.ai-provider }}
+        INPUT_AI_MODEL: ${{ inputs.ai-model }}
+        INPUT_AI_ENDPOINT: ${{ inputs.ai-endpoint }}
+        INPUT_AI_API_KEY: ${{ inputs.ai-api-key }}
+        INPUT_AI_TEMPERATURE: ${{ inputs.ai-temperature }}
+        INPUT_AI_SYSTEM_PROMPT: ${{ inputs.ai-system-prompt }}
+        INPUT_AI_ON_ERROR: ${{ inputs.ai-on-error }}
+      run: node "${{ github.action_path }}/dist/index.js"

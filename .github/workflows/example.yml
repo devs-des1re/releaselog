@@ -1,0 +1,95 @@
+name: Example
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Tag to generate release notes for.
+        required: true
+        type: string
+      mode:
+        description: Example job to run.
+        required: true
+        type: choice
+        default: dry-run
+        options:
+          - minimal
+          - with-ai
+          - dry-run
+
+permissions:
+  contents: write
+
+jobs:
+  minimal:
+    if: inputs.mode == 'minimal'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.tag }}
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Generate release notes
+        uses: devs-des1re/releaselog@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          dev-branch: dev
+          current-tag: ${{ inputs.tag }}
+
+  with-ai:
+    if: inputs.mode == 'with-ai'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.tag }}
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Generate release notes
+        uses: devs-des1re/releaselog@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          dev-branch: dev
+          current-tag: ${{ inputs.tag }}
+          humanize: true
+          ai-provider: openai
+          ai-model: gpt-4o-mini
+          ai-api-key: ${{ secrets.OPENAI_API_KEY }}
+          ai-on-error: fallback
+          # ai-provider: anthropic
+          # ai-model: claude-3-5-sonnet-latest
+          # ai-api-key: ${{ secrets.ANTHROPIC_API_KEY }}
+          # ai-provider: openai-compatible
+          # ai-endpoint: http://localhost:11434/v1
+          # ai-model: llama3.2
+
+  dry-run:
+    if: inputs.mode == 'dry-run'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.tag }}
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Generate release notes
+        uses: devs-des1re/releaselog@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          dev-branch: dev
+          current-tag: ${{ inputs.tag }}
+          dry-run: true
+          output-file: ./release-preview.md
+
+      - name: Upload preview
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-preview
+          path: ./release-preview.md

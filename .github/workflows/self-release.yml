@@ -1,0 +1,73 @@
+name: Self Release
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Tag to release. The tag must already exist.
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Resolve tag
+        id: tag
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "tag=${{ inputs.tag }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "tag=${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.tag.outputs.tag }}
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Generate release
+        id: releaselog
+        uses: ./
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          dev-branch: dev
+          current-tag: ${{ steps.tag.outputs.tag }}
+          release-prerelease: auto
+
+      - name: Fallback release
+        if: failure() && steps.releaselog.outcome == 'failure'
+        run: |
+          gh release create "${{ steps.tag.outputs.tag }}" \
+            --repo "${{ github.repository }}" \
+            --title "${{ steps.tag.outputs.tag }}" \
+            --generate-notes \
+            --verify-tag
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Resolve floating tag
+        id: floating
+        run: node .github/scripts/floating-tag.mjs "${{ steps.tag.outputs.tag }}" >> "$GITHUB_OUTPUT"
+
+      - name: Move floating tag
+        run: |
+          git tag -f "${{ steps.floating.outputs.name }}" "${{ steps.tag.outputs.tag }}"
+          git push origin "${{ steps.floating.outputs.name }}" --force
+        env:
+          GIT_AUTHOR_NAME: github-actions[bot]
+          GIT_AUTHOR_EMAIL: github-actions[bot]@users.noreply.github.com
+          GIT_COMMITTER_NAME: github-actions[bot]
+          GIT_COMMITTER_EMAIL: github-actions[bot]@users.noreply.github.com

@@ -1,0 +1,75 @@
+name: Bug report
+description: Report a problem with releaselog.
+title: '[Bug]: '
+labels: ['bug']
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What went wrong?
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Reproduction steps
+      description: The smallest sequence that reproduces the problem.
+      placeholder: |
+        1. Create a tag named ...
+        2. Run the action with ...
+        3. See the error ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behaviour
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behaviour
+    validations:
+      required: true
+
+  - type: dropdown
+    id: version
+    attributes:
+      label: Action version
+      options:
+        - v1
+        - v1-beta
+        - Commit SHA
+    validations:
+      required: true
+
+  - type: textarea
+    id: inputs
+    attributes:
+      label: Inputs used
+      description: Redact tokens and API keys before pasting.
+      render: yaml
+    validations:
+      required: false
+
+  - type: textarea
+    id: workflow
+    attributes:
+      label: Workflow snippet
+      description: The relevant part of your workflow file.
+      render: yaml
+    validations:
+      required: true
+
+  - type: input
+    id: os
+    attributes:
+      label: Runner OS
+      placeholder: ubuntu-latest
+    validations:
+      required: true

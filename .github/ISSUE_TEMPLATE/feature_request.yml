@@ -1,0 +1,42 @@
+name: Feature request
+description: Suggest an improvement for releaselog.
+title: '[Feature]: '
+labels: ['enhancement']
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem statement
+      description: What problem are you trying to solve?
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed solution
+      description: What should releaselog do differently?
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+    validations:
+      required: true
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Affected area
+      options:
+        - Tag resolution
+        - Commit classification
+        - Contributor resolution
+        - Rendering
+        - AI
+        - Publishing
+        - Other
+    validations:
+      required: true
