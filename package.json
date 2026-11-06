@@ -26,9 +26,9 @@
     "prepare": "npm run build"
   },
   "dependencies": {
-    "@actions/core": "^2.0.3",
-    "@actions/exec": "^2.0.0",
-    "@actions/github": "^8.0.1",
+    "@actions/core": "^3.0.1",
+    "@actions/exec": "^3.0.0",
+    "@actions/github": "^9.1.1",
     "@ai-sdk/anthropic": "^4.0.96",
     "@ai-sdk/google": "^4.0.111",
     "@ai-sdk/openai": "^4.0.108",
