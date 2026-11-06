@@ -16,7 +16,7 @@ contributors:
   require_pings: false
   fuzzy_name_search: false
 humanize:
-  enabled: true
+  enabled: false
   mode: vercel
   provider: openai
   model: gpt-4o-mini

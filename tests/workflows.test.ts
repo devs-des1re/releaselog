@@ -16,7 +16,7 @@ interface Workflow {
       needs?: string | string[];
       uses?: string;
       with?: Record<string, string>;
-      steps?: Array<{ uses?: string; run?: string }>;
+      steps?: Array<{ uses?: string; run?: string; with?: Record<string, string | boolean> }>;
     }
   >;
 }
@@ -41,6 +41,12 @@ describe('release workflow', () => {
     expect(ciJob?.uses).toBe('./.github/workflows/ci.yml');
     expect(ciJob?.with?.ref).toContain('needs.resolve.outputs.tag');
     expect(releaseJob?.needs).toEqual(expect.arrayContaining(['resolve', 'ci']));
+  });
+
+  it('keeps self-release deterministic regardless of repository config', () => {
+    const releaseStep = selfRelease.jobs?.release?.steps?.find((step) => step.uses === './');
+
+    expect(String(releaseStep?.with?.humanize)).toBe('false');
   });
 
   it('does not run on branch pushes or pull requests', () => {

@@ -60,6 +60,7 @@ jobs:
           dev-branch: dev
           current-tag: ${{ needs.resolve.outputs.tag }}
           release-prerelease: auto
+          humanize: false
 
       - name: Fallback release
         if: failure() && steps.releaselog.outcome == 'failure'
