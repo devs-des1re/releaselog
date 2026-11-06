@@ -6,6 +6,7 @@ import { parse } from 'yaml';
 
 interface Workflow {
   on?: {
+    pull_request?: unknown;
     workflow_call?: { inputs?: Record<string, unknown> };
     push?: { branches?: string[]; tags?: string[] };
   };
@@ -40,6 +41,11 @@ describe('release workflow', () => {
     expect(ciJob?.uses).toBe('./.github/workflows/ci.yml');
     expect(ciJob?.with?.ref).toContain('needs.resolve.outputs.tag');
     expect(releaseJob?.needs).toEqual(expect.arrayContaining(['resolve', 'ci']));
+  });
+
+  it('does not run on branch pushes or pull requests', () => {
+    expect(ci.on?.pull_request).toBeUndefined();
+    expect(ci.on?.push).toBeUndefined();
   });
 
   it('exposes the CI workflow as reusable and checks out the requested ref', () => {

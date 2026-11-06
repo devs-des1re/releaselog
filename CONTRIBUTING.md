@@ -25,6 +25,8 @@ npm run test:watch
 
 Fixtures live in `tests/fixtures/`. Tests must not depend on network access or on a real Git repository; command execution and HTTP calls are injected.
 
+CI does not run on branch pushes or pull requests. It runs only from the Self Release workflow, against the tag being released.
+
 ## Release process
 
 1. Bump the version with `npm version <patch|minor|major>`.
