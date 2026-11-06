@@ -4,6 +4,9 @@ updates:
     directory: /
     schedule:
       interval: weekly
+    commit-message:
+      prefix: chore
+      include: scope
     groups:
       actions-toolkit:
         patterns:
@@ -14,8 +17,23 @@ updates:
       types:
         patterns:
           - '@types/*'
+    ignore:
+      # The v3/v9 Actions toolkit packages are ESM-only and break the ncc
+      # bundle. Remove these once the build can emit/bundle ESM.
+      - dependency-name: '@actions/core'
+        update-types: ['version-update:semver-major']
+      - dependency-name: '@actions/exec'
+        update-types: ['version-update:semver-major']
+      - dependency-name: '@actions/github'
+        update-types: ['version-update:semver-major']
+      # typescript-eslint 8 does not support the TypeScript 7 compiler.
+      - dependency-name: 'typescript'
+        update-types: ['version-update:semver-major']
 
   - package-ecosystem: github-actions
     directory: /
     schedule:
       interval: weekly
+    commit-message:
+      prefix: chore
+      include: scope

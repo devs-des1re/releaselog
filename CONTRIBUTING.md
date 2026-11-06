@@ -29,7 +29,7 @@ Fixtures live in `tests/fixtures/`. Tests must not depend on network access or o
 
 1. Bump the version with `npm version <patch|minor|major>`.
 2. Push the resulting tag to `dev` for a pre-release, to `main` for a stable release, or to the matching `vN` maintenance branch for an older major.
-3. Watch the Self Release workflow. It generates and publishes the release, then moves the floating tag that matches the tag's major version.
+3. Watch the Self Release workflow. It runs the CI workflow against the tag first. If CI fails, the release job does not run. If CI passes, it generates and publishes the release, then moves the floating tag that matches the tag's major version.
 
 ## Major versions
 

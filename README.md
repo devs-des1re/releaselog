@@ -340,7 +340,7 @@ The original action exposed no inputs. This action is additive: every new input 
 
 ## For maintainers
 
-Feature work lands on `dev`; `main` receives merges from `dev` and hosts stable tags. When a new major starts, previous majors move to maintenance branches such as `v1`. The action is built with `tsc` and bundled with `@vercel/ncc`, and `dist/` is committed because GitHub Actions do not run a build step. See [CONTRIBUTING.md](./CONTRIBUTING.md) for the full release process. The repository releases itself with `uses: ./`, so a broken action fails its own release.
+Feature work lands on `dev`; `main` receives merges from `dev` and hosts stable tags. When a new major starts, previous majors move to maintenance branches such as `v1`. A tag push runs CI against that tag before publishing, so a failed CI run blocks the release. The action is built with `tsc` and bundled with `@vercel/ncc`, and `dist/` is committed because GitHub Actions do not run a build step. See [CONTRIBUTING.md](./CONTRIBUTING.md) for the full release process. The repository releases itself with `uses: ./`, so a broken action fails its own release.
 
 ## License
 

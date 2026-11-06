@@ -29,7 +29,7 @@ describe('action.yml', () => {
     const action = manifest();
     expect(action.runs.using).toBe('composite');
 
-    const setup = action.runs.steps?.find((step) => step.uses === 'actions/setup-node@v4');
+    const setup = action.runs.steps?.find((step) => step.uses?.startsWith('actions/setup-node@'));
     expect(setup).toBeDefined();
 
     const setupWith = setup as { with?: Record<string, string> };

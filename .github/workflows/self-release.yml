@@ -14,8 +14,10 @@ permissions:
   contents: write
 
 jobs:
-  release:
+  resolve:
     runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.tag.outputs.tag }}
     steps:
       - name: Resolve tag
         id: tag
@@ -26,15 +28,27 @@ jobs:
             echo "tag=${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
           fi
 
+  ci:
+    needs: resolve
+    uses: ./.github/workflows/ci.yml
+    with:
+      ref: ${{ needs.resolve.outputs.tag }}
+    permissions:
+      contents: read
+
+  release:
+    needs: [resolve, ci]
+    runs-on: ubuntu-latest
+    steps:
       - name: Checkout
         uses: actions/checkout@v7
         with:
-          ref: ${{ steps.tag.outputs.tag }}
+          ref: ${{ needs.resolve.outputs.tag }}
           fetch-depth: 0
           fetch-tags: true
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: '24'
 
@@ -44,15 +58,15 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           dev-branch: dev
-          current-tag: ${{ steps.tag.outputs.tag }}
+          current-tag: ${{ needs.resolve.outputs.tag }}
           release-prerelease: auto
 
       - name: Fallback release
         if: failure() && steps.releaselog.outcome == 'failure'
         run: |
-          gh release create "${{ steps.tag.outputs.tag }}" \
+          gh release create "${{ needs.resolve.outputs.tag }}" \
             --repo "${{ github.repository }}" \
-            --title "${{ steps.tag.outputs.tag }}" \
+            --title "${{ needs.resolve.outputs.tag }}" \
             --generate-notes \
             --verify-tag
         env:
@@ -60,11 +74,11 @@ jobs:
 
       - name: Resolve floating tag
         id: floating
-        run: node .github/scripts/floating-tag.mjs "${{ steps.tag.outputs.tag }}" >> "$GITHUB_OUTPUT"
+        run: node .github/scripts/floating-tag.mjs "${{ needs.resolve.outputs.tag }}" >> "$GITHUB_OUTPUT"
 
       - name: Move floating tag
         run: |
-          git tag -f "${{ steps.floating.outputs.name }}" "${{ steps.tag.outputs.tag }}"
+          git tag -f "${{ steps.floating.outputs.name }}" "${{ needs.resolve.outputs.tag }}"
           git push origin "${{ steps.floating.outputs.name }}" --force
         env:
           GIT_AUTHOR_NAME: github-actions[bot]
