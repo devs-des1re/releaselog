@@ -1,8 +1,15 @@
 import { z } from 'zod';
 
 import { loadConfig, type ReleaselogConfig } from './config';
-import { DEFAULT_HEADERS, type SectionHeaders } from './render';
-import type { AiMode, AiOnError, AiProvider, BaseVersionGranularity, TagOrder } from './types';
+import { DEFAULT_HEADERS } from './render';
+import type {
+  AiMode,
+  AiOnError,
+  AiProvider,
+  BaseVersionGranularity,
+  SectionHeaders,
+  TagOrder,
+} from './types';
 
 export const INPUT_NAMES = [
   'token',

@@ -51,6 +51,12 @@ describe('postProcess', () => {
     expect(postProcess(`Sure!\n\n${placeholder}`)).toBe(`${placeholder}\n`);
   });
 
+  it('normalizes dashes, curly quotes, and emojis', () => {
+    expect(postProcess('## Changes\n- It’s “ready” — done 🚀')).toBe(
+      '## Changes\n- It\'s "ready" - done\n',
+    );
+  });
+
   it('normalizes CRLF, trailing spaces, and the final newline', () => {
     expect(postProcess('## Changes  \r\n- improved   \r\n\r\n')).toBe('## Changes\n- improved\n');
   });

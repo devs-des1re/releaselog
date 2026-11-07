@@ -29,17 +29,11 @@ function statusOf(error: unknown): number | undefined {
 export async function publishRelease(options: PublishReleaseOptions): Promise<string> {
   const octokit = createOctokit(options.token, options.fetchImpl);
 
-  try {
-    const existing = await octokit.rest.repos.getReleaseByTag({
-      owner: options.owner,
-      repo: options.repo,
-      tag: options.tag,
-    });
-
+  const updateExisting = async (releaseId: number): Promise<string> => {
     const updated = await octokit.rest.repos.updateRelease({
       owner: options.owner,
       repo: options.repo,
-      release_id: existing.data.id,
+      release_id: releaseId,
       tag_name: options.tag,
       name: options.name,
       body: options.body,
@@ -47,11 +41,26 @@ export async function publishRelease(options: PublishReleaseOptions): Promise<st
       prerelease: options.prerelease,
     });
     return updated.data.html_url;
+  };
+
+  const findByTag = async (): Promise<number> => {
+    const existing = await octokit.rest.repos.getReleaseByTag({
+      owner: options.owner,
+      repo: options.repo,
+      tag: options.tag,
+    });
+    return existing.data.id;
+  };
+
+  try {
+    return await updateExisting(await findByTag());
   } catch (error) {
     if (statusOf(error) !== 404) {
       throw error;
     }
+  }
 
+  try {
     const created = await octokit.rest.repos.createRelease({
       owner: options.owner,
       repo: options.repo,
@@ -62,6 +71,12 @@ export async function publishRelease(options: PublishReleaseOptions): Promise<st
       prerelease: options.prerelease,
     });
     return created.data.html_url;
+  } catch (error) {
+    // A concurrent run may have created the release between the 404 and POST.
+    if (statusOf(error) !== 422) {
+      throw error;
+    }
+    return updateExisting(await findByTag());
   }
 }
 

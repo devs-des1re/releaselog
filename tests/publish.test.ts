@@ -94,6 +94,29 @@ describe('publishRelease', () => {
     expect(createBody).toBeUndefined();
   });
 
+  it('updates the release when a concurrent create wins the race', async () => {
+    let gets = 0;
+    server.use(
+      http.get(`${repositoryUrl}/releases/tags/:tag`, () => {
+        gets += 1;
+        return gets === 1
+          ? HttpResponse.json({ message: 'Not Found' }, { status: 404 })
+          : HttpResponse.json({ id: 456, html_url: releaseUrl });
+      }),
+      http.post(`${repositoryUrl}/releases`, () =>
+        HttpResponse.json({ message: 'already_exists' }, { status: 422 }),
+      ),
+    );
+
+    await expect(publish({ name: 'Raced release' })).resolves.toBe(releaseUrl);
+
+    expect(createBody).toBeUndefined();
+    expect(updateBody).toMatchObject({
+      tag_name: 'v1.0.0',
+      name: 'Raced release',
+    });
+  });
+
   it('surfaces non-404 API errors', async () => {
     server.use(
       http.get(`${repositoryUrl}/releases/tags/:tag`, () =>

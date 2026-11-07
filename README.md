@@ -10,6 +10,8 @@
 
 With `breaking-changes: true`, commits marked with `!` or a `BREAKING CHANGE:` footer are listed under Breaking Changes instead of their normal section.
 
+Commit, PR, and compare links use `GITHUB_SERVER_URL`, so GitHub Enterprise works without extra configuration.
+
 ## Minimal workflow
 
 ```yaml
@@ -230,6 +232,8 @@ GitHub-hosted runners cannot reach a service on your laptop. Point `ai-endpoint`
 
 With `ai-on-error: fallback`, a failed AI call logs a warning, publishes the raw changelog, and emits `humanized: false`. With `fail`, the action stops before publishing.
 
+Humanized output is normalized to ASCII punctuation and stripped of emojis before it is rendered.
+
 ## Customisation
 
 Every setting is optional. The file is loaded from `config-path`, and inputs win when both are set.
@@ -272,7 +276,7 @@ publish:
 A custom Handlebars template replaces the entire built-in renderer. It receives:
 
 - `breaking_changes`, `new_features`, `bug_fixes`, `docs_changes`, `other_changes`, `contributors`
-- `tag`, `previous_tag`, `compare_url`, `owner`, `repo`
+- `tag`, `previous_tag`, `compare_url`, `owner`, `repo`, `server_url`, `section_headers`
 
 Each commit exposes `sha`, `shortSha`, `desc`, `commitUrl`, `prNumber`, `prUrl`, `type`, `scope`, and `breaking`. Each contributor exposes `login`, `name`, `email`, `commitCount`, and `resolved`.
 

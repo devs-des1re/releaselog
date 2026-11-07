@@ -176,6 +176,7 @@ async function run(): Promise<void> {
     previousTag,
     owner,
     repo,
+    serverUrl: process.env.GITHUB_SERVER_URL,
     commits,
     contributors: contributorResult.contributors,
     headers: settings.sectionHeaders,
