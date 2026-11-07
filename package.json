@@ -1,6 +1,6 @@
 {
   "name": "@devs-des1re/releaselog",
-  "version": "1.0.0-rc.1",
+  "version": "1.0.0",
   "description": "Generate structured release notes from Git history and publish them as GitHub Releases.",
   "license": "MIT",
   "author": "devs-des1re",
