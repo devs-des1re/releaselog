@@ -13,6 +13,10 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: releaselog-release
+  cancel-in-progress: false
+
 jobs:
   resolve:
     runs-on: ubuntu-latest
@@ -59,6 +63,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           dev-branch: dev
           current-tag: ${{ needs.resolve.outputs.tag }}
+          previous-tag: ${{ vars.RELEASELOG_PREVIOUS_TAG }}
           release-prerelease: auto
           humanize: false
 

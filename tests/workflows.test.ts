@@ -10,6 +10,7 @@ interface Workflow {
     workflow_call?: { inputs?: Record<string, unknown> };
     push?: { branches?: string[]; tags?: string[] };
   };
+  concurrency?: { group?: string; 'cancel-in-progress'?: boolean };
   jobs?: Record<
     string,
     {
@@ -43,10 +44,16 @@ describe('release workflow', () => {
     expect(releaseJob?.needs).toEqual(expect.arrayContaining(['resolve', 'ci']));
   });
 
+  it('serializes release runs', () => {
+    expect(selfRelease.concurrency?.group).toBe('releaselog-release');
+    expect(selfRelease.concurrency?.['cancel-in-progress']).toBe(false);
+  });
+
   it('keeps self-release deterministic regardless of repository config', () => {
     const releaseStep = selfRelease.jobs?.release?.steps?.find((step) => step.uses === './');
 
     expect(String(releaseStep?.with?.humanize)).toBe('false');
+    expect(String(releaseStep?.with?.['previous-tag'])).toContain('vars.RELEASELOG_PREVIOUS_TAG');
   });
 
   it('does not run on branch pushes or pull requests', () => {

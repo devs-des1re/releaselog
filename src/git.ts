@@ -119,12 +119,17 @@ export class Git {
   }
 
   async resolveCommit(ref: string): Promise<string> {
-    const stdout = await this.run(['rev-parse', '--verify', `${ref}^{commit}`]);
+    const stdout = await this.run(['rev-parse', '--verify', '--end-of-options', `${ref}^{commit}`]);
     return stdout.trim();
   }
 
   async tagExists(tag: string): Promise<boolean> {
-    const stdout = await this.tryRun(['rev-parse', '--verify', `refs/tags/${tag}^{commit}`]);
+    const stdout = await this.tryRun([
+      'rev-parse',
+      '--verify',
+      '--end-of-options',
+      `refs/tags/${tag}^{commit}`,
+    ]);
     return stdout !== null;
   }
 
@@ -144,7 +149,7 @@ export class Git {
   }
 
   async isAncestor(ancestor: string, descendant: string): Promise<boolean> {
-    const args = ['merge-base', '--is-ancestor', ancestor, descendant];
+    const args = ['merge-base', '--is-ancestor', '--', ancestor, descendant];
     const result = await this.execFn('git', args, { cwd: this.cwd });
     if (result.exitCode === 0) {
       return true;
@@ -158,7 +163,12 @@ export class Git {
   /** Resolves a branch to a commit, preferring the remote tracking ref. */
   async resolveBranchHead(branch: string): Promise<string | null> {
     for (const ref of [`refs/remotes/origin/${branch}`, `refs/heads/${branch}`]) {
-      const stdout = await this.tryRun(['rev-parse', '--verify', `${ref}^{commit}`]);
+      const stdout = await this.tryRun([
+        'rev-parse',
+        '--verify',
+        '--end-of-options',
+        `${ref}^{commit}`,
+      ]);
       if (stdout !== null && stdout.trim().length > 0) {
         return stdout.trim();
       }
@@ -167,7 +177,13 @@ export class Git {
   }
 
   async log(revisions: string[]): Promise<RawCommit[]> {
-    const stdout = await this.run(['log', '-z', `--format=${LOG_FORMAT}`, ...revisions]);
+    const stdout = await this.run([
+      'log',
+      '-z',
+      `--format=${LOG_FORMAT}`,
+      '--end-of-options',
+      ...revisions,
+    ]);
     return stdout
       .split(RECORD_SEPARATOR)
       .map(parseLogRecord)

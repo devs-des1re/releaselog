@@ -33,6 +33,12 @@ CI does not run on branch pushes or pull requests. It runs only from the Self Re
 2. Push the resulting tag to `dev` for a pre-release, to `main` for a stable release, or to the matching `vN` maintenance branch for an older major.
 3. Watch the Self Release workflow. It runs the CI workflow against the tag first. If CI fails, the release job does not run. If CI passes, it generates and publishes the release, then moves the floating tag that matches the tag's major version.
 
+## Stable release compare
+
+A stable release normally looks for a previous stable tag. When the first stable release follows release candidates, there is no stable tag to compare against.
+
+For that release only, set the repository variable `RELEASELOG_PREVIOUS_TAG` to the last release candidate tag before pushing the stable tag. Self Release passes it to the action, so `v1.0.0` compares from `v1.0.0-rc.1` instead of falling back to the full commit list. Clear the variable immediately after the stable release.
+
 ## Major versions
 
 A new major starts only for breaking changes. Before tagging the first release of a new major:
