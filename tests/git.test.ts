@@ -61,12 +61,30 @@ describe('Git', () => {
     );
 
     await expect(git.resolveCommit('v1.0.0')).resolves.toBe('abc123');
-    expect(calls[0]).toEqual(['rev-parse', '--verify', 'v1.0.0^{commit}']);
+    expect(calls[0]).toEqual(['rev-parse', '--verify', '--end-of-options', 'v1.0.0^{commit}']);
+  });
+
+  it('treats option-like refs as revisions, not git flags', async () => {
+    const calls: string[][] = [];
+    const git = new Git(
+      execFrom((args) => {
+        calls.push(args);
+        return ok('abc123\n');
+      }),
+    );
+
+    await git.resolveCommit('-n');
+    await git.isAncestor('-n', 'v1.0.0');
+    await git.log(['-n..HEAD']);
+
+    expect(calls[0]).toContain('--end-of-options');
+    expect(calls[1]).toEqual(['merge-base', '--is-ancestor', '--', '-n', 'v1.0.0']);
+    expect(calls[2]).toContain('--end-of-options');
   });
 
   it('reports whether a tag exists', async () => {
     const git = new Git(
-      execFrom((args) => (args[2] === 'refs/tags/v1.0.0^{commit}' ? ok('abc123\n') : fail())),
+      execFrom((args) => (args[3] === 'refs/tags/v1.0.0^{commit}' ? ok('abc123\n') : fail())),
     );
 
     await expect(git.tagExists('v1.0.0')).resolves.toBe(true);
@@ -102,13 +120,13 @@ describe('Git', () => {
   it('prefers the remote tracking branch and falls back to a local branch', async () => {
     const remote = new Git(
       execFrom((args) =>
-        args[2] === 'refs/remotes/origin/dev^{commit}' ? ok('remote123\n') : fail(),
+        args[3] === 'refs/remotes/origin/dev^{commit}' ? ok('remote123\n') : fail(),
       ),
     );
     await expect(remote.resolveBranchHead('dev')).resolves.toBe('remote123');
 
     const local = new Git(
-      execFrom((args) => (args[2] === 'refs/heads/dev^{commit}' ? ok('local456\n') : fail())),
+      execFrom((args) => (args[3] === 'refs/heads/dev^{commit}' ? ok('local456\n') : fail())),
     );
     await expect(local.resolveBranchHead('dev')).resolves.toBe('local456');
 

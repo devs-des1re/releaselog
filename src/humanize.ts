@@ -81,10 +81,18 @@ function stripCodeFences(value: string): string {
   return result.trim();
 }
 
+function sanitizeText(value: string): string {
+  return value
+    .replace(/[\u2018\u2019]/g, "'")
+    .replace(/[\u201C\u201D]/g, '"')
+    .replace(/[\u2013\u2014]/g, '-')
+    .replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\uFE0F\u200D]/gu, '');
+}
+
 /**
  * Cleans model output: removes a wrapping code fence and any preamble before
- * the first level-two heading, normalizes trailing whitespace, and ends with
- * exactly one newline.
+ * the first level-two heading, normalizes punctuation, trims trailing
+ * whitespace, and ends with exactly one newline.
  */
 export function postProcess(value: string): string {
   let text = stripCodeFences(value.replace(/\r\n/g, '\n'));
@@ -94,7 +102,9 @@ export function postProcess(value: string): string {
     text = text.slice(heading);
   }
 
-  text = text.replace(/[ \t]+$/gm, '').trim();
+  text = sanitizeText(text)
+    .replace(/[ \t]+$/gm, '')
+    .trim();
 
   return `${text}\n`;
 }

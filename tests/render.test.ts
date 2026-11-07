@@ -236,6 +236,19 @@ https://github.com/devs-des1re/releaselog/compare/v0.1.0...v0.2.0
     );
   });
 
+  it('uses the configured server URL for links', () => {
+    const output = render({
+      serverUrl: 'https://github.example.com',
+      commits: [commit()],
+      contributors: [contributor()],
+    });
+
+    expect(output).toContain('https://github.example.com/devs-des1re/releaselog/commit/a1b2c3d');
+    expect(output).toContain(
+      'https://github.example.com/devs-des1re/releaselog/compare/v0.1.0...v0.2.0',
+    );
+  });
+
   it('uses the commits URL when there is no previous tag', () => {
     const output = render({
       tag: 'v1.0.0',
@@ -310,11 +323,13 @@ describe('renderCustomTemplate', () => {
       contributors: [contributor()],
     });
 
+    expect(context.server_url).toBe('https://github.com');
+    expect(context.section_headers.features).toBe('New Features');
+
     const output = renderCustomTemplate(
       '## {{tag}}\n{{#each new_features}}- {{desc}}\n{{/each}}{{compare_url}}',
       context,
     );
-
     expect(output).toBe(
       '## v0.2.0\n- feat: add a feature\nhttps://github.com/devs-des1re/releaselog/compare/v0.1.0...v0.2.0\n',
     );

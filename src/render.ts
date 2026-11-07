@@ -1,20 +1,13 @@
 import Handlebars from 'handlebars';
 
-import type { Commit, Contributor, RenderedCommit, RenderContext } from './types';
-
-export interface SectionHeaders {
-  breaking: string;
-  features: string;
-  fixes: string;
-  docs: string;
-  other: string;
-}
+import type { Commit, Contributor, RenderedCommit, RenderContext, SectionHeaders } from './types';
 
 export interface RenderOptions {
   tag: string;
   previousTag: string;
   owner: string;
   repo: string;
+  serverUrl?: string;
   commits: Commit[];
   contributors: Contributor[];
   headers?: Partial<SectionHeaders>;
@@ -61,7 +54,9 @@ function toRenderedCommit(commit: Commit, repositoryUrl: string): RenderedCommit
 }
 
 export function buildRenderContext(options: RenderOptions): RenderContext {
-  const repositoryUrl = `https://github.com/${options.owner}/${options.repo}`;
+  const serverUrl = (options.serverUrl ?? 'https://github.com').replace(/\/+$/, '');
+  const repositoryUrl = `${serverUrl}/${options.owner}/${options.repo}`;
+  const headers: SectionHeaders = { ...DEFAULT_HEADERS, ...options.headers };
   const nonBreaking = options.commits.filter((commit) => !commit.breaking);
   const inSection = (section: Commit['section']): RenderedCommit[] =>
     nonBreaking
@@ -76,6 +71,8 @@ export function buildRenderContext(options: RenderOptions): RenderContext {
       : `${repositoryUrl}/commits/${options.tag}`,
     owner: options.owner,
     repo: options.repo,
+    server_url: serverUrl,
+    section_headers: headers,
     breaking_changes: options.commits
       .filter((commit) => commit.breaking)
       .map((commit) => toRenderedCommit(commit, repositoryUrl)),
@@ -99,7 +96,7 @@ function ensureTrailingNewline(value: string): string {
 /** Renders the built-in changelog format. */
 export function renderChangelog(options: RenderOptions): string {
   const context = buildRenderContext(options);
-  const headers: SectionHeaders = { ...DEFAULT_HEADERS, ...options.headers };
+  const headers = context.section_headers;
 
   if (options.commits.length === 0) {
     const placeholder = options.previousTag

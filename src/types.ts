@@ -72,6 +72,14 @@ export interface RenderedCommit {
   breaking: boolean;
 }
 
+export interface SectionHeaders {
+  breaking: string;
+  features: string;
+  fixes: string;
+  docs: string;
+  other: string;
+}
+
 /** Template context exposed to custom Handlebars templates. */
 export interface RenderContext {
   tag: string;
@@ -79,6 +87,8 @@ export interface RenderContext {
   compare_url: string;
   owner: string;
   repo: string;
+  server_url: string;
+  section_headers: SectionHeaders;
   breaking_changes: RenderedCommit[];
   new_features: RenderedCommit[];
   bug_fixes: RenderedCommit[];
