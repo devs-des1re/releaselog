@@ -49,11 +49,11 @@ describe('release workflow', () => {
     expect(selfRelease.concurrency?.['cancel-in-progress']).toBe(false);
   });
 
-  it('keeps self-release deterministic regardless of repository config', () => {
+  it('keeps self-release deterministic and uses the default stable tag resolution', () => {
     const releaseStep = selfRelease.jobs?.release?.steps?.find((step) => step.uses === './');
 
     expect(String(releaseStep?.with?.humanize)).toBe('false');
-    expect(String(releaseStep?.with?.['previous-tag'])).toContain('vars.RELEASELOG_PREVIOUS_TAG');
+    expect(releaseStep?.with?.['previous-tag']).toBeUndefined();
   });
 
   it('does not run on branch pushes or pull requests', () => {

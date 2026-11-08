@@ -63,7 +63,6 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           dev-branch: dev
           current-tag: ${{ needs.resolve.outputs.tag }}
-          previous-tag: ${{ vars.RELEASELOG_PREVIOUS_TAG }}
           release-prerelease: auto
           humanize: false
 
