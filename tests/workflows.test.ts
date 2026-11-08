@@ -17,7 +17,13 @@ interface Workflow {
       needs?: string | string[];
       uses?: string;
       with?: Record<string, string>;
-      steps?: Array<{ uses?: string; run?: string; with?: Record<string, string | boolean> }>;
+      steps?: Array<{
+        name?: string;
+        uses?: string;
+        run?: string;
+        with?: Record<string, string | boolean>;
+        env?: Record<string, string>;
+      }>;
     }
   >;
 }
@@ -54,6 +60,20 @@ describe('release workflow', () => {
 
     expect(String(releaseStep?.with?.humanize)).toBe('false');
     expect(releaseStep?.with?.['previous-tag']).toBeUndefined();
+  });
+
+  it('moves floating tags with a workflows-scoped token', () => {
+    const preflight = selfRelease.jobs?.release?.steps?.find(
+      (step) => step.name === 'Check floating tag token',
+    );
+    const moveStep = selfRelease.jobs?.release?.steps?.find(
+      (step) => step.name === 'Move floating tag',
+    );
+
+    expect(preflight?.env?.TAG_TOKEN).toContain('secrets.RELEASELOG_PAT');
+    expect(moveStep?.env?.TAG_TOKEN).toContain('secrets.RELEASELOG_PAT');
+    expect(moveStep?.run).toContain('x-access-token');
+    expect(moveStep?.run).toContain('refs/tags/');
   });
 
   it('does not run on branch pushes or pull requests', () => {

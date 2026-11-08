@@ -322,7 +322,7 @@ Each major version gets its own stable and pre-release alias:
 
 The self-release workflow reads the major version from the tag, so `v1.5.0` moves only `v1`, `v2.0.0` moves only `v2`, and their pre-releases move the matching `-beta` alias. A v2 release never moves a v1 alias.
 
-All aliases are force-moved. Protect them with an organisation ruleset that prevents deletion but permits force-pushes from `github-actions[bot]`.
+All aliases are force-moved. Protect them with an organisation ruleset that prevents deletion but permits force-pushes from the token used by the release workflow.
 
 If you continue maintaining v1 after v2, keep a `v1` branch for v1 fixes. The workflow inside each tag moves that tag's major alias, so backport the floating-tag workflow change to the maintenance branch before cutting further v1 releases.
 

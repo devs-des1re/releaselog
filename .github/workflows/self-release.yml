@@ -56,6 +56,15 @@ jobs:
         with:
           node-version: '24'
 
+      - name: Check floating tag token
+        run: |
+          if [ -z "$TAG_TOKEN" ]; then
+            echo "RELEASELOG_PAT is required to move floating tags." >&2
+            exit 1
+          fi
+        env:
+          TAG_TOKEN: ${{ secrets.RELEASELOG_PAT }}
+
       - name: Generate release
         id: releaselog
         uses: ./
@@ -84,8 +93,10 @@ jobs:
       - name: Move floating tag
         run: |
           git tag -f "${{ steps.floating.outputs.name }}" "${{ needs.resolve.outputs.tag }}"
-          git push origin "${{ steps.floating.outputs.name }}" --force
+          git push "https://x-access-token:${TAG_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" \
+            "refs/tags/${{ steps.floating.outputs.name }}" --force
         env:
+          TAG_TOKEN: ${{ secrets.RELEASELOG_PAT }}
           GIT_AUTHOR_NAME: github-actions[bot]
           GIT_AUTHOR_EMAIL: github-actions[bot]@users.noreply.github.com
           GIT_COMMITTER_NAME: github-actions[bot]

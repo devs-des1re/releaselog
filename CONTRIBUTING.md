@@ -54,7 +54,7 @@ Each major has two aliases:
 | `v2.0.0`        | `v2`               |
 | `v2.0.0-beta.1` | `v2-beta`          |
 
-All aliases are force-moved. Protect them with an organisation ruleset that prevents deletion but permits force-pushes from `github-actions[bot]`.
+All aliases are force-moved. The Move floating tag step uses the `RELEASELOG_PAT` secret instead of `GITHUB_TOKEN`, because `GITHUB_TOKEN` cannot update a tag whose target commit changes workflow files. The token needs Contents write and Workflows write; a classic PAT needs the `repo` and `workflow` scopes. Protect the aliases with an organisation ruleset that prevents deletion but permits force-pushes from the account or app that owns that token.
 
 ## Why the repository releases itself
 
