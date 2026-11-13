@@ -47,7 +47,7 @@
     "@types/semver": "^7.8.0",
     "@vercel/ncc": "^0.45.0",
     "eslint": "^10.14.0",
-    "msw": "^3.0.3",
+    "msw": "^3.0.4",
     "prettier": "^3.9.10",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.72.1",
